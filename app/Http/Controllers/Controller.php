@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use View;
+use App\Models\Theme;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
