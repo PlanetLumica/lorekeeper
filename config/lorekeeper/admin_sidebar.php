@@ -228,6 +228,10 @@ return [
                 'name' => 'Log Viewer',
                 'url'  => 'admin/logs',
             ],
+            [
+                'name' => 'Theme Manager',
+                'url' => 'admin/themes'
+            ],
         ],
     ],
 ];

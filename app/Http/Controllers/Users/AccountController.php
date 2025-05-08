@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers\Users;
 
+use File;
+use Image;
+use App\Models\Theme;
+use App\Models\ThemeEditor;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
 use App\Models\User\User;
@@ -62,7 +67,22 @@ class AccountController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getSettings() {
-        return view('account.settings');
+        $user = Auth::user();
+
+        if ($user->isStaff || $user->isAdmin) {
+            // staff can see all active themes
+            $themeOptions = ['0' => 'Select Theme'] + Theme::where('is_active', 1)->where('theme_type', 'base')->get()->pluck('displayName', 'id')->toArray();
+        } else {
+            // members can only see active themes that are user selectable
+            $themeOptions = ['0' => 'Select Theme'] + Theme::where('is_active', 1)->where('theme_type', 'base')->where('is_user_selectable', 1)->get()->pluck('displayName', 'id')->toArray();
+        }
+
+        $decoratorOptions = ['0' => 'Select Decorator Theme'] + Theme::where('is_active', 1)->where('theme_type', 'decorator')->where('is_user_selectable', 1)->get()->pluck('displayName', 'id')->toArray();
+
+        return view('account.settings', [
+            'themeOptions' => $themeOptions + Auth::user()->themes()->where('theme_type', 'base')->get()->pluck('displayName', 'id')->toArray(),
+            'decoratorThemes' => $decoratorOptions + Auth::user()->themes()->where('theme_type', 'decorator')->get()->pluck('displayName', 'id')->toArray(),
+        ]);
     }
 
     /**
@@ -373,6 +393,21 @@ class AccountController extends Controller {
      */
     public function getAliases() {
         return view('account.aliases');
+    }
+
+    /**
+     * Edits the user's theme.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postTheme(Request $request, UserService $service) {
+        if ($service->updateTheme($request->only(['theme', 'decorator_theme']), Auth::user())) {
+            flash('Theme updated successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+        }
+        return redirect()->back();
     }
 
     /**
