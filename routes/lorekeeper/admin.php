@@ -86,7 +86,7 @@ Route::group(['prefix' => 'logs', 'middleware' => 'power:edit_site_settings'], f
 });
 
 // THEME MANAGER
-Route::group(['prefix' => 'themes', 'middleware' => 'power:edit_site_settings'], function() {
+Route::group(['prefix' => 'themes', 'middleware' => 'power:edit_site_settings'], function () {
     Route::get('/', 'ThemeController@getIndex');
 
     Route::get('create', 'ThemeController@getCreateTheme');

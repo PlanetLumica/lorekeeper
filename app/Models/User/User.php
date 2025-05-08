@@ -109,8 +109,7 @@ class User extends Authenticatable implements MustVerifyEmail {
     /**
      * Get user theme.
      */
-    public function theme()
-    {
+    public function theme() {
         return $this->belongsTo('App\Models\Theme');
     }
 
@@ -121,9 +120,8 @@ class User extends Authenticatable implements MustVerifyEmail {
         return $this->belongsTo('App\Models\Theme', 'decorator_theme_id');
     }
 
-
     /**
-     * Get User Granted Themes 
+     * Get User Granted Themes.
      */
     /**
      * Get user theme.
@@ -289,7 +287,9 @@ class User extends Authenticatable implements MustVerifyEmail {
      **********************************************************************************************/
 
     /**
-     * Checks if the user has the named theme
+     * Checks if the user has the named theme.
+     *
+     * @param mixed $theme_id
      *
      * @return bool
      */
@@ -297,9 +297,10 @@ class User extends Authenticatable implements MustVerifyEmail {
         $theme = Theme::find($theme_id);
         $user_has = $this->recipes && $this->recipes->contains($theme);
         $default = $theme->is_user_selectable;
+
         return $default ? true : $user_has;
     }
-    
+
     /**
      * Get the user's alias.
      *

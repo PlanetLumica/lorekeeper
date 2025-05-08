@@ -5,9 +5,7 @@
     $characterCurrencies = \App\Models\Currency\Currency::where('is_character_owned', 1)->orderBy('sort_character', 'DESC')->pluck('name', 'id');
     $items = \App\Models\Item\Item::orderBy('name')->pluck('name', 'id');
     $currencies = \App\Models\Currency\Currency::where('is_user_owned', 1)->orderBy('name')->pluck('name', 'id');
-    $themes = \App\Models\Theme::where('is_user_selectable', 0)
-        ->orderBy('name')
-        ->pluck('name', 'id');
+    $themes = \App\Models\Theme::where('is_user_selectable', 0)->orderBy('name')->pluck('name', 'id');
     if ($showLootTables) {
         $tables = \App\Models\Loot\LootTable::orderBy('name')->pluck('name', 'id');
     }
@@ -32,10 +30,15 @@
         @if ($loots)
             @foreach ($loots as $loot)
                 <tr class="loot-row">
-                    <td>{!! Form::select('rewardable_type[]', ['Item' => 'Item', 'Currency' => 'Currency'] + ($showLootTables ? ['LootTable' => 'Loot Table'] : []) + ($showRaffles ? ['Raffle' => 'Raffle Ticket'] : []) + (isset($showThemes) && $showThemes ? ['Theme' => 'Theme'] : []), $loot->rewardable_type, [
-                        'class' => 'form-control reward-type',
-                        'placeholder' => 'Select Reward Type',
-                    ]) !!}</td>
+                    <td>{!! Form::select(
+                        'rewardable_type[]',
+                        ['Item' => 'Item', 'Currency' => 'Currency'] + ($showLootTables ? ['LootTable' => 'Loot Table'] : []) + ($showRaffles ? ['Raffle' => 'Raffle Ticket'] : []) + (isset($showThemes) && $showThemes ? ['Theme' => 'Theme'] : []),
+                        $loot->rewardable_type,
+                        [
+                            'class' => 'form-control reward-type',
+                            'placeholder' => 'Select Reward Type',
+                        ],
+                    ) !!}</td>
                     <td class="loot-row-select">
                         @if ($loot->rewardable_type == 'Item')
                             {!! Form::select('rewardable_id[]', $items, $loot->rewardable_id, ['class' => 'form-control item-select selectize', 'placeholder' => 'Select Item']) !!}

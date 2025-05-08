@@ -70,7 +70,7 @@ class ThemeService extends Service {
       if (!isset($data['rewardable_id']) && !isset($data['all_themes'])) return true;
       if (isset($data['all_themes'])) $assets = ['all_themes' => 1];
       else {
-        // The data will be stored as an asset table.
+        // The data will be stored as an asset table, json_encode()d.
         // First build the asset table, then prepare it for storage.
         $assets = createAssetsArray();
         foreach ($data['rewardable_id'] as $key => $r) {
