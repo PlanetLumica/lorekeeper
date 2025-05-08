@@ -2,14 +2,14 @@
 
 namespace App\Services\Item;
 
-use App\Models\Item\Item;
-use App\Services\InventoryManager;
-use App\Services\Service;
-use Illuminate\Support\Facades\DB;
 use App\Models\Currency\Currency;
+use App\Models\Item\Item;
 use App\Models\Loot\LootTable;
 use App\Models\Raffle\Raffle;
 use App\Models\Theme;
+use App\Services\InventoryManager;
+use App\Services\Service;
+use Illuminate\Support\Facades\DB;
 
 class BoxService extends Service {
     /*
@@ -28,11 +28,11 @@ class BoxService extends Service {
      */
     public function getEditData() {
         return [
-            'items' => Item::orderBy('name')->pluck('name', 'id'),
+            'items'      => Item::orderBy('name')->pluck('name', 'id'),
             'currencies' => Currency::where('is_user_owned', 1)->orderBy('name')->pluck('name', 'id'),
-            'tables' => LootTable::orderBy('name')->pluck('name', 'id'),
-            'raffles' => Raffle::where('rolled_at', null)->where('is_active', 1)->orderBy('name')->pluck('name', 'id'),
-            'themes' => Theme::orderBy('name')->where('is_user_selectable', 0)->pluck('name', 'id'),
+            'tables'     => LootTable::orderBy('name')->pluck('name', 'id'),
+            'raffles'    => Raffle::where('rolled_at', null)->where('is_active', 1)->orderBy('name')->pluck('name', 'id'),
+            'themes'     => Theme::orderBy('name')->where('is_user_selectable', 0)->pluck('name', 'id'),
         ];
     }
 
