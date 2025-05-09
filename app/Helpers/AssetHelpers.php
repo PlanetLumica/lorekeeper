@@ -146,8 +146,11 @@ function getAssetModelString($type, $namespaced = true) {
             break;
 
         case 'borders':
-            if($namespaced) return '\App\Models\Border\Border';
-            else return 'Border';
+            if ($namespaced) {
+                return '\App\Models\Border\Border';
+            } else {
+                return 'Border';
+            }
             break;
     }
 
@@ -418,12 +421,13 @@ function fillUserAssets($assets, $sender, $recipient, $logType, $data, $selected
                     return false;
                 }
             }
-        }
-        elseif($key == 'borders' && count($contents))
-        {
-            $service = new \App\Services\BorderService;
-            foreach($contents as $asset)
-                if(!$service->creditBorder($sender, $recipient, null, $logType, $data, $asset['asset'])) return false;
+        } elseif ($key == 'borders' && count($contents)) {
+            $service = new App\Services\BorderService;
+            foreach ($contents as $asset) {
+                if (!$service->creditBorder($sender, $recipient, null, $logType, $data, $asset['asset'])) {
+                    return false;
+                }
+            }
         }
     }
 

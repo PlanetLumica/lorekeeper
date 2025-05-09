@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Config;
+use App\Models\Border\Border;
+use App\Models\Border\BorderCategory;
 use App\Models\Character\CharacterCategory;
 use App\Models\Currency\Currency;
 use App\Models\Currency\CurrencyCategory;
-use App\Models\Border\Border;
-use App\Models\Border\BorderCategory;
 use App\Models\Feature\Feature;
 use App\Models\Feature\FeatureCategory;
 use App\Models\Item\Item;
@@ -538,22 +537,19 @@ class WorldController extends Controller {
 
         return view('world.character_categories', [
             'categories' => $query->visible(Auth::user() ?? null)->orderBy('sort', 'DESC')->orderBy('id')->paginate(20)->appends($request->query()),
-            ]);
+        ]);
     }
-
 
     /**
      * Shows the border categories page.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getBorderCategories(Request $request)
-    {
+    public function getBorderCategories(Request $request) {
         $query = BorderCategory::query();
         $name = $request->get('name');
         if ($name) {
-            $query->where('name', 'LIKE', '%' . $name . '%');
+            $query->where('name', 'LIKE', '%'.$name.'%');
         }
 
         return view('world.border_categories', [
@@ -564,11 +560,9 @@ class WorldController extends Controller {
     /**
      * Shows the borders page.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getBorders(Request $request)
-    {
+    public function getBorders(Request $request) {
         $query = Border::base()->active(Auth::user() ?? null);
         $data = $request->only(['border_category_id', 'name', 'sort', 'is_default', 'artist']);
         if (isset($data['border_category_id']) && $data['border_category_id'] != 'none') {
@@ -580,7 +574,7 @@ class WorldController extends Controller {
         }
 
         if (isset($data['name'])) {
-            $query->where('name', 'LIKE', '%' . $data['name'] . '%');
+            $query->where('name', 'LIKE', '%'.$data['name'].'%');
         }
 
         if (isset($data['artist']) && $data['artist'] != 'none') {
@@ -610,36 +604,35 @@ class WorldController extends Controller {
         }
 
         return view('world.borders', [
-            'borders' => $query->paginate(20)->appends($request->query()),
+            'borders'    => $query->paginate(20)->appends($request->query()),
             'categories' => ['none' => 'Any Category'] + BorderCategory::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'is_default' => ['none' => 'Any Type', '0' => 'Unlockable', '1' => 'Default'],
-            'artists' => ['none' => 'Any Artist'] + User::whereIn('id', Border::whereNotNull('artist_id')->pluck('artist_id')->toArray())->pluck('name', 'id')->toArray(),
+            'artists'    => ['none' => 'Any Artist'] + User::whereIn('id', Border::whereNotNull('artist_id')->pluck('artist_id')->toArray())->pluck('name', 'id')->toArray(),
         ]);
     }
 
     /**
      * Shows an individual border's page.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getBorder($id)
-    {
+    public function getBorder($id) {
         $border = Border::base()->where('id', $id)->active()->first();
         if (!$border) {
             abort(404);
         }
 
         return view('world._border_page', [
-            'border' => $border,
-            'imageUrl' => $border->imageUrl,
-            'name' => $border->displayName,
+            'border'      => $border,
+            'imageUrl'    => $border->imageUrl,
+            'name'        => $border->displayName,
             'description' => $border->parsed_description,
         ]);
     }
 
-    public function getBorderPreview(Request $request)
-    {
+    public function getBorderPreview(Request $request) {
         $border = Border::find($request->input('border'));
         $top = Border::find($request->input('top'));
         $bottom = Border::find($request->input('bottom'));
@@ -649,7 +642,7 @@ class WorldController extends Controller {
         }
 
         return view('world._border_ajax', [
-            'top' => $top,
+            'top'    => $top,
             'bottom' => $bottom,
             'border' => $border,
         ]);

@@ -4,16 +4,17 @@ namespace App\Services;
 
 use App\Facades\Notifications;
 use App\Facades\Settings;
+use App\Models\Border\Border;
 use App\Models\Character\CharacterDesignUpdate;
 use App\Models\Character\CharacterTransfer;
 use App\Models\Gallery\GallerySubmission;
 use App\Models\Invitation;
-use App\Models\Border\Border;
 use App\Models\Rank\Rank;
 use App\Models\Submission\Submission;
 use App\Models\Trade;
 use App\Models\User\User;
 use App\Models\User\UserUpdateLog;
+use Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -21,9 +22,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
 use Laravel\Fortify\Contracts\TwoFactorAuthenticationProvider;
-use App\Services\Service;
-use App\Services\SubmissionManager;
-use Auth;
 
 class UserService extends Service {
     /*
@@ -650,7 +648,7 @@ class UserService extends Service {
             }
 
             $user->settings->deactivate_reason = isset($data['deactivate_reason']) && $data['deactivate_reason'] ? $data['deactivate_reason'] : null;
-                $user->settings->save();
+            $user->settings->save();
 
             return $this->commitReturn(true);
         } catch (\Exception $e) {
@@ -663,32 +661,32 @@ class UserService extends Service {
     /**
      * Updates the user's border.
      *
-     * @param  array                  $data
-     * @param  \App\Models\User\User  $user
+     * @param array $data
+     * @param User  $user
+     *
      * @return bool
      */
-    public function updateBorder($data, $user)
-    {
+    public function updateBorder($data, $user) {
         DB::beginTransaction();
 
         try {
             $border = Border::find($data['border']);
 
-            //do some validation...
+            // do some validation...
             if (!Auth::user()->isStaff && $border) {
                 if ($border->parent_id) {
                     abort(404);
                 }
                 if (!$border->is_default) {
                     if (!Auth::user()->hasBorder($border->id)) {
-                        throw new \Exception("You do not own this border.");
+                        throw new \Exception('You do not own this border.');
                     }
                 }
                 if (!$border->is_active) {
-                    throw new \Exception("This border is not active.");
+                    throw new \Exception('This border is not active.');
                 }
                 if ($border->admin_only) {
-                    throw new \Exception("You cannot select a staff border.");
+                    throw new \Exception('You cannot select a staff border.');
                 }
             }
 
@@ -697,50 +695,49 @@ class UserService extends Service {
                 if (!$variant) {
                     abort(404);
                 }
-                //do some validation...
+                // do some validation...
                 if (!Auth::user()->isStaff) {
                     if (!$variant->parent->is_default) {
                         if (!Auth::user()->hasBorder($variant->parent->id)) {
-                            throw new \Exception("You do not own this border.");
+                            throw new \Exception('You do not own this border.');
                         }
                     }
                     if (!$variant->is_active) {
-                        throw new \Exception("This border variant is not active.");
+                        throw new \Exception('This border variant is not active.');
                     }
                     if ($variant->parent->admin_only) {
-                        throw new \Exception("You cannot select a staff border.");
+                        throw new \Exception('You cannot select a staff border.');
                     }
                 }
             }
             if (!$data['bottom_border_id'] && $data['top_border_id'] || $data['bottom_border_id'] && !$data['top_border_id']) {
-                throw new \Exception("You must select both a top border and a bottom border.");
+                throw new \Exception('You must select both a top border and a bottom border.');
             }
             if ($data['bottom_border_id'] > 0) {
                 $layer = Border::where('id', $data['bottom_border_id'])->whereNotNull('parent_id')->where('border_type', 'bottom')->first();
                 if (!$layer) {
-                    throw new \Exception("That bottom border does not exist.");
+                    throw new \Exception('That bottom border does not exist.');
                 }
                 $toplayer = Border::where('id', $data['top_border_id'])->whereNotNull('parent_id')->where('border_type', 'top')->first();
                 if (!$toplayer) {
-                    throw new \Exception("That top border does not exist.");
+                    throw new \Exception('That top border does not exist.');
                 }
-                //do some validation...
+                // do some validation...
                 if (!Auth::user()->isStaff) {
                     if (!$layer->parent->is_default || !$toplayer->parent->is_default) {
                         if (!Auth::user()->hasBorder($layer->parent->id) || !Auth::user()->hasBorder($toplayer->parent->id)) {
-                            throw new \Exception("You do not own this border.");
+                            throw new \Exception('You do not own this border.');
                         }
                     }
                     if (!$layer->is_active) {
-                        throw new \Exception("This bottom border is not active.");
+                        throw new \Exception('This bottom border is not active.');
                     }
                     if (!$toplayer->is_active) {
-                        throw new \Exception("This top border is not active.");
+                        throw new \Exception('This top border is not active.');
                     }
                     if ($layer->parent->admin_only || $toplayer->parent->admin_only) {
-                        throw new \Exception("You cannot select a staff border.");
+                        throw new \Exception('You cannot select a staff border.');
                     }
-
                 }
             }
 

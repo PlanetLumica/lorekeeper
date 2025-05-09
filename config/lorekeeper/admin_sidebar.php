@@ -114,7 +114,7 @@ return [
             ],
             [
                 'name' => 'Border Grants',
-                'url' => 'admin/grants/borders'
+                'url'  => 'admin/grants/borders',
             ],
         ],
     ],
@@ -204,9 +204,9 @@ return [
             ],
             [
                 'name' => 'User Borders',
-                'url' => 'admin/data/borders'
+                'url'  => 'admin/data/borders',
             ],
-        ]
+        ],
     ],
     'Raffles'    => [
         'power' => 'manage_raffles',

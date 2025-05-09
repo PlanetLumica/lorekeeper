@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Users;
 
-use File;
 use App\Http\Controllers\Controller;
 use App\Models\Border\Border;
 use App\Models\Notification;
@@ -63,11 +62,9 @@ class AccountController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getSettings()
-    {
+    public function getSettings() {
         if (Auth::user()->isStaff) {
             $borderOptions = ['0' => 'Select Border'] + Border::base()->active(Auth::user() ?? null)->where('is_default', 1)->get()->pluck('settingsName', 'id')->toArray() + Border::base()->where('admin_only', 1)->get()->pluck('settingsName', 'id')->toArray();
-
         } else {
             $borderOptions = ['0' => 'Select Border'] + Border::base()->active(Auth::user() ?? null)->where('is_default', 1)->where('admin_only', 0)->get()->pluck('settingsName', 'id')->toArray();
         }
@@ -76,11 +73,11 @@ class AccountController extends Controller {
         $admin = Border::base()->where('admin_only', 1)->get();
 
         return view('account.settings', [
-            'borders' => $borderOptions + Auth::user()->borders()->get()->pluck('settingsName', 'id')->toArray(),
-            'default' => $default,
-            'admin' => $admin,
+            'borders'         => $borderOptions + Auth::user()->borders()->get()->pluck('settingsName', 'id')->toArray(),
+            'default'         => $default,
+            'admin'           => $admin,
             'border_variants' => ['0' => 'Pick a Border First'],
-            'bottom_layers' => ['0' => 'Pick a Border First'],
+            'bottom_layers'   => ['0' => 'Pick a Border First'],
         ]);
     }
 
@@ -539,50 +536,46 @@ class AccountController extends Controller {
     /**
      * Edits the user's border.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postBorder(Request $request, UserService $service)
-    {
-        if ($service->updateBorder($request->only('border', 'border_variant_id', 'bottom_border_id','top_border_id','border_flip'), Auth::user())) {
+    public function postBorder(Request $request, UserService $service) {
+        if ($service->updateBorder($request->only('border', 'border_variant_id', 'bottom_border_id', 'top_border_id', 'border_flip'), Auth::user())) {
             flash('Border updated successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
                 flash($error)->error();
             }
-
         }
+
         return redirect()->back();
     }
 
     /**
-     * Get applicable variants
+     * Get applicable variants.
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getBorderVariants(Request $request)
-    {
+    public function getBorderVariants(Request $request) {
         $border = $request->input('border');
 
         if (Border::where('parent_id', '=', $border)->where('border_type', 'variant')->active(Auth::user() ?? null)->count()) {
             $border_variants = ['0' => 'Select Border Variant'] + Border::where('parent_id', '=', $border)->where('border_type', 'variant')->active(Auth::user() ?? null)->get()->pluck('settingsName', 'id')
-            ->toArray();
-        }else{
+                ->toArray();
+        } else {
             $border_variants = ['0' => 'None Available'];
         }
 
         return view('account.border_variants', [
-            'border_variants' => $border_variants
+            'border_variants' => $border_variants,
         ]);
     }
 
     /**
-     * Get applicable layers
+     * Get applicable layers.
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getBorderLayers(Request $request)
-    {
+    public function getBorderLayers(Request $request) {
         $border = $request->input('border');
 
         $layeredborder = Border::find($border);
@@ -593,11 +586,11 @@ class AccountController extends Controller {
 
         return view('account.border_layers', [
             'top_layers' => $top_layers ?? ['0' => 'Select Top Layer'] + Border::where('parent_id', '=', $border)->where('border_type', 'top')->active(Auth::user() ?? null)->get()
-            ->pluck('settingsName', 'id')
-            ->toArray(),
+                ->pluck('settingsName', 'id')
+                ->toArray(),
             'bottom_layers' => $bottom_layers ?? ['0' => 'Select Bottom Layer'] + Border::where('parent_id', '=', $border)->where('border_type', 'bottom')->active(Auth::user() ?? null)->get()
-            ->pluck('settingsName', 'id')
-            ->toArray(),
+                ->pluck('settingsName', 'id')
+                ->toArray(),
         ]);
     }
 }

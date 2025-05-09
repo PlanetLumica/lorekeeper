@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
+use App\Models\Border\Border;
 use App\Models\Character\Character;
 use App\Models\Character\CharacterImage;
 use App\Models\Character\Sublist;
-use App\Models\Character\CharacterCategory;
-use App\Models\Border\Border;
 use App\Models\Currency\Currency;
 use App\Models\Gallery\Gallery;
 use App\Models\Gallery\GalleryCharacter;
@@ -440,36 +439,36 @@ class UserController extends Controller {
     /**
      * Shows a user's borders.
      *
-     * @param  string  $name
+     * @param string $name
+     *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getUserBorders($name)
-    {
-        $default =  Border::base()->active(Auth::user() ?? null)->where('is_default', 1)->get();
+    public function getUserBorders($name) {
+        $default = Border::base()->active(Auth::user() ?? null)->where('is_default', 1)->get();
         $admin = Border::base()->where('admin_only', 1)->get();
-        
+
         return view('user.borders', [
-            'user' => $this->user,
+            'user'    => $this->user,
             'default' => $default,
-            'admin' => $admin,
-            'logs' => $this->user->getBorderLogs(),
+            'admin'   => $admin,
+            'logs'    => $this->user->getBorderLogs(),
         ]);
     }
 
     /**
      * Shows a user's border logs.
      *
-     * @param  string  $name
+     * @param string $name
+     *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getUserBorderLogs($name)
-    {
+    public function getUserBorderLogs($name) {
         $user = $this->user;
 
         return view('user.border_logs', [
-            'user' => $this->user,
-            'logs' => $this->user->getBorderLogs(0),
-            'sublists' => Sublist::orderBy('sort', 'DESC')->get()
+            'user'     => $this->user,
+            'logs'     => $this->user->getBorderLogs(0),
+            'sublists' => Sublist::orderBy('sort', 'DESC')->get(),
         ]);
     }
 }
