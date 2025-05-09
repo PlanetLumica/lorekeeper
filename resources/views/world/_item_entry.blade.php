@@ -74,7 +74,7 @@
                     <div class="card collapse mt-1" id="border{{ $item->id }}">
                         <div class="card-body">
                             @if (isset($item->tag('border')->data['all_borders']))
-                            <p class="text-center">Each use of this item unlocks <strong>one</strong> random border between all onsite.</p>
+                                <p class="text-center">Each use of this item unlocks <strong>one</strong> random border between all onsite.</p>
                             @else
                                 <p class="text-center">Each use of this item unlocks <strong>one</strong> of the following borders randomly.<br>
                                     If one is crossed out, you already have it.</p>

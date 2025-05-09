@@ -9,7 +9,7 @@
             {{-- Show avatar if not compact --}}
             @if (isset($compact) && !$compact)
                 <div class="d-none d-md-block">
-                    {!!  $comment->commenter->userBorder() !!}
+                    {!! $comment->commenter->userBorder() !!}
                 </div>
             @endif
 
