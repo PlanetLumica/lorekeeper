@@ -112,6 +112,10 @@ return [
                 'name' => 'Item Grants',
                 'url'  => 'admin/grants/items',
             ],
+            [
+                'name' => 'Border Grants',
+                'url' => 'admin/grants/borders'
+            ],
         ],
     ],
     'Masterlist' => [
@@ -198,7 +202,11 @@ return [
                 'name' => 'Dynamic Limits',
                 'url'  => 'admin/data/limits',
             ],
-        ],
+            [
+                'name' => 'User Borders',
+                'url' => 'admin/data/borders'
+            ],
+        ]
     ],
     'Raffles'    => [
         'power' => 'manage_raffles',
